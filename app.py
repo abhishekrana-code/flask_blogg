@@ -1,35 +1,15 @@
-from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask import Flask, flash, url_for, redirect, render_template
-from flask_sqlalchemy import SQLAlchemy
 from forms import RegistrationForm, LoginForm 
+from models import User, Post
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.config['SECRET_KEY'] = 'ecf0e9fc94ea05601651791c2727fca1'
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///site.db'
-db = SQLAlchemy(app)
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
-    password = db.Column(db.String(60), nullable=False)
-    posts = db.relationship('Post', backref='author', lazy=True) #one to many relationship between user and post
-    #uppercase p because we are referring to the class name and not the table name
-
-    def __repr__(self):
-        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
-class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)#foreign key to link the post to the user who created it and lowercase u because we are referring to the table name and not the class name
-
-    def __repr__(self):
-        return f"Post('{self.title}', '{self.date_posted}')"
+db = SQLAlchemy(app);
 
 posts=[
     {
