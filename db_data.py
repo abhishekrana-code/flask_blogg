@@ -1,5 +1,5 @@
 from app import app, db
-from app import User  # or your model
+from app.models import User  # or your model
 
 with app.app_context():
     users = User.query.all()
